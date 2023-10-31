@@ -1,0 +1,12 @@
+﻿global using MediatR;
+global using PastryShop.Application.Models;
+global using PastryShop.Domain.Aggregates.ProductAggregate;
+global using PastryShop.Application.Enums;
+global using PastryShop.Application.Products.Commands;
+global using PastryShop.Dal;
+global using AutoMapper;
+global using PastryShop.Domain.Aggregates.UserProfileAggregate;
+global using PastryShop.Domain.Aggregates.OrderAggregate;
+global using PastryShop.Application.ShipmentTypes.Commands;
+global using PastryShop.Application.ShipmentTypes.Queries;
+global using Microsoft.EntityFrameworkCore;
