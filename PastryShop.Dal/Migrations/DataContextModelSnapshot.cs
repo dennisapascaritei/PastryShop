@@ -190,6 +190,45 @@ namespace PastryShop.Dal.Migrations
                     b.ToTable("UserTokens");
                 });
 
+            modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.LineItem", b =>
+                {
+                    b.Property<Guid>("LineItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("LineItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("LineItem");
+                });
+
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
@@ -197,84 +236,29 @@ namespace PastryShop.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateCreated")
+                        .HasMaxLength(40)
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DeliveryDate")
+                        .HasMaxLength(40)
                         .HasColumnType("datetime2");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("ShipmentTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ShippingAddressOrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("UserInstructions")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ShipmentTypeId");
-
-                    b.HasIndex("ShippingAddressOrderId");
-
                     b.HasIndex("UserProfileId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.ShipmentType", b =>
-                {
-                    b.Property<Guid>("ShipmentTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.HasKey("ShipmentTypeId");
-
-                    b.ToTable("ShipmentTypes");
-                });
-
-            modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.ShippingAddressOrder", b =>
-                {
-                    b.Property<Guid>("ShippingAddressOrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("County")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ShippingAddressOrderId");
-
-                    b.ToTable("ShippingAddressOrder");
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.ProductAggregate.Product", b =>
@@ -301,47 +285,36 @@ namespace PastryShop.Dal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double?>("Price")
+                    b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<double?>("Weight")
+                    b.Property<double>("Weight")
                         .HasColumnType("float");
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("OrderId");
-
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("PastryShop.Domain.Aggregates.UserProfileAggregate.ShippingAddress", b =>
+            modelBuilder.Entity("PastryShop.Domain.Aggregates.ShipmentTypeAggregate.ShipmentType", b =>
                 {
-                    b.Property<Guid>("ShippingAddressId")
+                    b.Property<Guid>("ShipmentTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
-                    b.Property<string>("County")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("ShipmentTypeId");
 
-                    b.Property<string>("PostCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ShippingAddressId");
-
-                    b.ToTable("ShippingAddress");
+                    b.ToTable("ShipmentTypes");
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile", b =>
@@ -365,38 +338,93 @@ namespace PastryShop.Dal.Migrations
                     b.ToTable("UserProfiles");
                 });
 
+            modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.LineItem", b =>
+                {
+                    b.HasOne("PastryShop.Domain.Aggregates.OrderAggregate.Order", null)
+                        .WithMany("LineItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PastryShop.Domain.Aggregates.ProductAggregate.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
-                    b.HasOne("PastryShop.Domain.Aggregates.OrderAggregate.ShipmentType", "ShipmentType")
-                        .WithMany()
-                        .HasForeignKey("ShipmentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PastryShop.Domain.Aggregates.OrderAggregate.ShippingAddressOrder", "ShippingAddressOrder")
-                        .WithMany()
-                        .HasForeignKey("ShippingAddressOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile", "UserProfile")
+                    b.HasOne("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile", null)
                         .WithMany()
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ShipmentType");
+                    b.OwnsOne("PastryShop.Domain.Aggregates.OrderAggregate.ShipmentTypeOrder", "ShipmentType", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("ShippingAddressOrder");
+                            b1.Property<DateTime>("LastUpdated")
+                                .HasMaxLength(40)
+                                .HasColumnType("datetime2");
 
-                    b.Navigation("UserProfile");
-                });
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
 
-            modelBuilder.Entity("PastryShop.Domain.Aggregates.ProductAggregate.Product", b =>
-                {
-                    b.HasOne("PastryShop.Domain.Aggregates.OrderAggregate.Order", null)
-                        .WithMany("ProductList")
-                        .HasForeignKey("OrderId");
+                            b1.Property<double>("Price")
+                                .HasMaxLength(40)
+                                .HasColumnType("float");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.OwnsOne("PastryShop.Domain.Aggregates.OrderAggregate.ShippingAddressOrder", "ShippingAddress", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Address")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
+
+                            b1.Property<string>("County")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
+
+                            b1.Property<string>("PostCode")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("ShipmentType")
+                        .IsRequired();
+
+                    b.Navigation("ShippingAddress")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile", b =>
@@ -408,39 +436,69 @@ namespace PastryShop.Dal.Migrations
 
                             b1.Property<string>("EmailAddress")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)");
 
                             b1.Property<string>("FirstName")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
 
                             b1.Property<string>("LastName")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)");
 
                             b1.Property<string>("Phone")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<Guid>("ShippingAddressId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasMaxLength(15)
+                                .HasColumnType("nvarchar(15)");
 
                             b1.HasKey("UserProfileId");
 
-                            b1.HasIndex("ShippingAddressId");
-
                             b1.ToTable("UserProfiles");
-
-                            b1.HasOne("PastryShop.Domain.Aggregates.UserProfileAggregate.ShippingAddress", "ShippingAddress")
-                                .WithMany()
-                                .HasForeignKey("ShippingAddressId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("UserProfileId");
 
-                            b1.Navigation("ShippingAddress");
+                            b1.OwnsOne("PastryShop.Domain.Aggregates.UserProfileAggregate.ShippingAddress", "ShippingAddress", b2 =>
+                                {
+                                    b2.Property<Guid>("BasicInfoUserProfileId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Address")
+                                        .IsRequired()
+                                        .HasMaxLength(40)
+                                        .HasColumnType("nvarchar(40)");
+
+                                    b2.Property<string>("City")
+                                        .IsRequired()
+                                        .HasMaxLength(40)
+                                        .HasColumnType("nvarchar(40)");
+
+                                    b2.Property<string>("County")
+                                        .IsRequired()
+                                        .HasMaxLength(40)
+                                        .HasColumnType("nvarchar(40)");
+
+                                    b2.Property<string>("PostCode")
+                                        .IsRequired()
+                                        .HasMaxLength(40)
+                                        .HasColumnType("nvarchar(40)");
+
+                                    b2.Property<Guid>("ShippingAddressId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.HasKey("BasicInfoUserProfileId");
+
+                                    b2.ToTable("UserProfiles");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("BasicInfoUserProfileId");
+                                });
+
+                            b1.Navigation("ShippingAddress")
+                                .IsRequired();
                         });
 
                     b.Navigation("BasicInfo")
@@ -449,7 +507,7 @@ namespace PastryShop.Dal.Migrations
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
-                    b.Navigation("ProductList");
+                    b.Navigation("LineItems");
                 });
 #pragma warning restore 612, 618
         }

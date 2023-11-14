@@ -30,3 +30,6 @@ global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.IdentityModel.Tokens;
 global using PastryShop.Application.Options;
 global using System.Text;
+global using PastryShop.Api.Contracts.Identity.Request;
+global using PastryShop.Api.Contracts.Identity.Response;
+global using PastryShop.Application.Identity.Commands;

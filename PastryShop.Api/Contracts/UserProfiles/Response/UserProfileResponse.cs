@@ -6,7 +6,7 @@ namespace PastryShop.Api.Contracts.UserProfiles.Response
     {
         public Guid UserProfileId { get; set; }
         public string IndentityId { get; set; }
-        public BasicInfo BasicInfo { get; set; }
+        public BasicInfoResponse BasicInfo { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
     }

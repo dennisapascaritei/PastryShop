@@ -21,7 +21,7 @@ namespace PastryShop.Application.Products.QueryHandlers
             {
                 var products = await _ctx.Products.ToListAsync(cancellationToken);
 
-                if (products is null)
+                if (products.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, ProductErrorMessages.ProductListIsEmpty);
                     return result;

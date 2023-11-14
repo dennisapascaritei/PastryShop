@@ -18,7 +18,7 @@ namespace PastryShop.Application.Products.QueryHandlers
 
             try
             {
-                var product = await _ctx.Products.FirstOrDefaultAsync(pr => pr.ProductId == request.ProductId);
+                var product = await _ctx.Products.FirstOrDefaultAsync(pr => pr.ProductId == request.ProductId, cancellationToken);
 
                 if (product == null)
                 {

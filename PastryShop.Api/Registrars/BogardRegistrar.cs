@@ -5,8 +5,8 @@ namespace PastryShop.Api.Registrars
     {
         public void RegisterServices(WebApplicationBuilder builder)
         {
-            builder.Services.AddAutoMapper(typeof(Program), typeof(ProductCreateCommand));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(ProductCreateCommand).Assembly));
+            builder.Services.AddAutoMapper(typeof(Program), typeof(GetAllUserProfilesQuery));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GetAllUserProfilesQuery).Assembly));
         }
     }
 }

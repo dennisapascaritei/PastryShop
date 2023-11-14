@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using PastryShop.Application.Orders.Commands;
 
 namespace PastryShop.Api.Controllers.V1
@@ -6,6 +7,7 @@ namespace PastryShop.Api.Controllers.V1
     [ApiController]
     [ApiVersion("1.0")]
     [Route(ApiRoutes.BaseRoute)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrderController : BaseController
     {
         private readonly IMediator _mediator;
@@ -46,12 +48,12 @@ namespace PastryShop.Api.Controllers.V1
         }
 
         [HttpPost]
-        [ValidateGuid("userProfileId")]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderCreateRequest newOrder, string userProfileId, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderCreateRequest newOrder, CancellationToken cancellationToken)
         {
+            var userProfileId = HttpContext.GetUserProfileIdClaimValue();
             var command = new OrderCreateCommand
             {
-                UserProfileId = Guid.Parse(userProfileId),
+                UserProfileId = userProfileId,
                 ProductList = newOrder.ProductList,
                 Price = newOrder.Price,
                 DeliveryDate = newOrder.DeliveryDate,
@@ -74,13 +76,14 @@ namespace PastryShop.Api.Controllers.V1
 
         [HttpPut]
         [Route(ApiRoutes.Order.OrderId)]
-        [ValidateGuid("orderId, userProfileId")]
-        public async Task<IActionResult> UpdateOrder([FromBody] OrderUpdateRequest updatedOrder, string orderId, string userProfileId, CancellationToken cancellationToken)
+        [ValidateGuid("orderId")]
+        public async Task<IActionResult> UpdateOrder([FromBody] OrderUpdateRequest updatedOrder, string orderId, CancellationToken cancellationToken)
         {
+            var userProfileId = HttpContext.GetUserProfileIdClaimValue();
             var command = new OrderUpdateCommand
             {
                 OrderId = Guid.Parse(orderId),
-                UserProfileId = Guid.Parse(userProfileId),
+                UserProfileId = userProfileId,
                 ProductList = updatedOrder.ProductList,
                 Price = updatedOrder.Price,
                 DeliveryDate = updatedOrder.DeliveryDate,

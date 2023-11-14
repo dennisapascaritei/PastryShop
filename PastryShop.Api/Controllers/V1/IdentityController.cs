@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PastryShop.Api.Contracts.Identity.Request;
-
+﻿
 namespace PastryShop.Api.Controllers.V1
 {
     [ApiController]
@@ -18,10 +16,33 @@ namespace PastryShop.Api.Controllers.V1
         }
 
         [HttpPost]
+        [Route(ApiRoutes.Identity.Registration)]
         [ValidateModel]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequest newUser, CancellationToken cancellationToken)
         {
-            var command = new 
+            var command = _mapper.Map<RegisterIdentityCommand>(newUser);
+
+            var result = await _mediator.Send(command, cancellationToken);
+            if (result.IsError) return HandleErrorResponse(result.Errors);
+
+            var mapped = _mapper.Map<IdentityUserProfileResponse>(result.Payload);
+
+            return Ok(mapped);
+        }
+
+        [HttpPost]
+        [Route(ApiRoutes.Identity.Login)]
+        [ValidateModel]
+        public async Task<IActionResult> Login(UserLoginRequest login, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<LoginCommand>(login);
+
+            var result = await _mediator.Send(command, cancellationToken);
+            if (result.IsError) return HandleErrorResponse(result.Errors);
+
+            var mapped = _mapper.Map<IdentityUserProfileResponse>(result.Payload);
+
+            return Ok(mapped);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace PastryShop.Application.Products.CommandHandlers
                 if (product is null)
                 {
                     result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, request.ProductId));
+                    return result;
                 }
 
                 _ctx.Products.Remove(product);

@@ -18,7 +18,9 @@ namespace PastryShop.Application.UserProfiles.QueryHandlers
             var result = new OperationResult<List<UserProfile>>();
             try
             {
-                var userProfiles = await _ctx.UserProfiles.ToListAsync(cancellationToken);
+                var userProfiles = await _ctx.UserProfiles
+                    .Include(up => up.BasicInfo.ShippingAddress)
+                    .ToListAsync(cancellationToken);
 
                 if (userProfiles is null)
                 {

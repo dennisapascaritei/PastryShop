@@ -1,75 +1,111 @@
 ﻿
+using Microsoft.EntityFrameworkCore.Storage;
 using PastryShop.Application.Orders.Commands;
 using PastryShop.Application.Products;
+using PastryShop.Application.ShipmentTypes;
 
 namespace PastryShop.Application.Orders.CommandHandlers
 {
     public class OrderUpdateCommandHandler : IRequestHandler<OrderUpdateCommand, OperationResult<Order>>
     {
         private readonly DataContext _ctx;
+        private readonly OperationResult<Order> _result = new OperationResult<Order>();
         public OrderUpdateCommandHandler(DataContext ctx)
         {
             _ctx = ctx;
         }
         public async Task<OperationResult<Order>> Handle(OrderUpdateCommand request, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<Order>();
-
             try
             {
                 var order = await _ctx.Orders
-                    .Include(o => o.ProductList)
+                    .Include(o => o.LineItems)
                     .Include(o => o.ShipmentType)
-                    .Include(o => o.ShippingAddressOrder)
+                    .Include(o => o.ShippingAddress)
                     .FirstOrDefaultAsync(o => o.OrderId == request.OrderId);
 
                 if (order is null)
                 {
-                    result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderNotFound);
-                    return result;
-                }
-
-                var productList = new List<Product>();
-                foreach (var productId in request.ProductList)
-                {
-                    var product = await _ctx.Products.FirstOrDefaultAsync(pr => pr.ProductId == productId);
-
-                    if (product == null)
-                    {
-                        result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, productId));
-                    }
-                    else productList.Add(product);
-                }
-
-                if (productList.Count == 0)
-                {
-                    result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderHasNoValidProductsAdded);
-                    return result;
+                    _result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderNotFound);
+                    return _result;
                 }
 
                 if (order.UserProfileId != request.UserProfileId)
                 {
-                    result.AddError(ErrorCode.OrderUpdateNotPossible, OrderErrorMessages.OrderUpdateNotPossible);
-                    return result;
+                    _result.AddError(ErrorCode.OrderUpdateNotPossible, OrderErrorMessages.OrderUpdateNotPossible);
+                    return _result;
                 }
 
+                await using var transaction = await _ctx.Database.BeginTransactionAsync(cancellationToken);
+
+                var shipmentTypeOrder = CreateShipmentTypeAsync(request, transaction, cancellationToken).Result;
                 var shippingAddressOrder = ShippingAddressOrder.CreateShippingAddressOrder(request.County, request.City, request.Address, request.PostCode);
-                var updatedOrder = Order.CreateOrder(request.UserProfileId, productList, request.Price, request.ShipmentTypeId, shippingAddressOrder, request.UserInstructions, request.DeliveryDate);
-                
+                var updatedOrder = Order.CreateOrder(request.UserProfileId, request.Price, shipmentTypeOrder, shippingAddressOrder, request.UserInstructions, request.DeliveryDate);
+
+                CreateLineItemsAsync(request.ProductList, updatedOrder, transaction, cancellationToken);
+
                 order.UpdateOrder(updatedOrder);
 
                 _ctx.Orders.Update(order);
                 await _ctx.SaveChangesAsync(cancellationToken);
 
-                result.Payload = updatedOrder;
+                _result.Payload = updatedOrder;
 
             }
             catch (Exception ex)
             {
-                result.AddUnknownError(ex.Message);
+                _result.AddUnknownError(ex.Message);
             }
 
-            return result;
+            return _result;
+        }
+
+        private async Task CreateLineItemsAsync(List<Guid> productIds, Order order, IDbContextTransaction transaction, CancellationToken cancellationToken)
+        {
+            try
+            {
+                foreach (var productId in productIds)
+                {
+                    var product = await _ctx.Products.FirstOrDefaultAsync(pr => pr.ProductId == productId, cancellationToken);
+
+                    if (product == null)
+                    {
+                        _result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, productId));
+                    }
+                    else order.AddLineItem(product);
+                }
+
+                if (order.LineItems.Count == 0)
+                {
+                    _result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderHasNoValidProductsAdded);
+                    transaction.RollbackAsync(cancellationToken);
+                }
+            }
+            catch (Exception)
+            {
+                transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        }
+        private async Task<ShipmentTypeOrder> CreateShipmentTypeAsync(OrderUpdateCommand order, IDbContextTransaction transaction, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var shipmentType = await _ctx.ShipmentTypes.FirstOrDefaultAsync(st => st.ShipmentTypeId == order.ShipmentTypeId);
+                if (shipmentType is null)
+                {
+                    _result.AddError(ErrorCode.NotFound, string.Format(ShipmentTypeErrorMessages.ShipmentTypeNotFound, order.ShipmentTypeId));
+                    _ctx.Database.RollbackTransactionAsync(cancellationToken);
+                }
+                var shipmentTypeOrder = ShipmentTypeOrder.CreateShipmentTypeOrder(shipmentType.Name, shipmentType.Price);
+
+                return shipmentTypeOrder;
+            }
+            catch (Exception)
+            {
+                _ctx.Database.RollbackTransactionAsync(cancellationToken);
+                throw;
+            }
         }
     }
 }

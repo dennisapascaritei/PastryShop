@@ -1,7 +1,4 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
-using PastryShop.Application.UserProfiles.Queries;
-
 namespace PastryShop.Application.UserProfiles.QueryHandlers
 {
     public class GetUserProfileByIdQueryHandler : IRequestHandler<GetUserProfileByIdQuery, OperationResult<UserProfile>>
@@ -19,7 +16,9 @@ namespace PastryShop.Application.UserProfiles.QueryHandlers
 
             try
             {
-                var userProfile = await _ctx.UserProfiles.FirstOrDefaultAsync(up => up.UserProfileId == request.UserProfileId, cancellationToken);
+                var userProfile = await _ctx.UserProfiles
+                    .Include(up => up.BasicInfo.ShippingAddress)
+                    .FirstOrDefaultAsync(up => up.UserProfileId == request.UserProfileId, cancellationToken);
                 
                 if (userProfile is null)
                 {

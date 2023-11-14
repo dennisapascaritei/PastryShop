@@ -22,5 +22,11 @@ namespace PastryShop.Api
         {
             public const string OrderId = "{orderId}";
         }
+        public class Identity
+        {
+            public const string Login = "login";
+            public const string Registration = "registration";
+            public const string IdentityById = "{identityUserId}";
+        }
     }
 }

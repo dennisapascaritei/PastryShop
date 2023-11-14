@@ -19,9 +19,9 @@ namespace PastryShop.Application.Orders.QueryHandlers
             try
             {
                 var order = await _ctx.Orders
-                    .Include(o => o.ProductList)
+                    .Include(o => o.LineItems)
                     .Include(o => o.ShipmentType)
-                    .Include(o => o.ShippingAddressOrder)
+                    .Include(o => o.ShippingAddress)
                     .FirstOrDefaultAsync(o => o.OrderId == request.OrderId, cancellationToken);
 
                 if (order is null)

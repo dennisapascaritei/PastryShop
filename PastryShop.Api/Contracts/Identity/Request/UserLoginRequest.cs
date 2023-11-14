@@ -5,7 +5,7 @@ namespace PastryShop.Api.Contracts.Identity.Request
     {
         [Required]
         [EmailAddress]
-        public string EmailAddress { get; set; }
+        public string Username { get; set; }
 
         [Required]
         public string Password { get; set; }

@@ -1,4 +1,6 @@
 ﻿
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
+
 namespace PastryShop.Dal
 {
     public class DataContext : IdentityDbContext
@@ -16,7 +18,9 @@ namespace PastryShop.Dal
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new UserProfileConfig());
-            builder.ApplyConfiguration(new ShippingAddressConfig());
+            builder.ApplyConfiguration(new LineItemConfig());
+            builder.ApplyConfiguration(new OrderConfig());
+            builder.ApplyConfiguration(new ProductConfiguration());
 
             builder.ApplyConfiguration(new IdentityUserLoginConfig());
             builder.ApplyConfiguration(new IdentityUserRoleConfig());

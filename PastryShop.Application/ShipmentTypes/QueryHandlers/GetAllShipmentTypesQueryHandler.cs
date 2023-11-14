@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
 
 namespace PastryShop.Application.ShipmentTypes.QueryHandlers
 {
@@ -21,7 +22,7 @@ namespace PastryShop.Application.ShipmentTypes.QueryHandlers
             {
                 var shipmentTypes = await _ctx.ShipmentTypes.ToListAsync(cancellationToken);
 
-                if (shipmentTypes is null)
+                if (shipmentTypes.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, ShipmentTypeErrorMessages.ShipmentTypeListIsEmpty);
                     return result;

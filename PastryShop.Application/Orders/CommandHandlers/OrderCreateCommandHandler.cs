@@ -1,12 +1,20 @@
 ﻿
+using Azure.Core;
+using MediatR;
+using Microsoft.EntityFrameworkCore.Storage;
 using PastryShop.Application.Orders.Commands;
 using PastryShop.Application.Products;
+using PastryShop.Application.ShipmentTypes;
+using PastryShop.Domain.Aggregates.OrderAggregate;
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
+using System.ComponentModel;
 
 namespace PastryShop.Application.Orders.CommandHandlers
 {
     public class OrderCreateCommandHandler : IRequestHandler<OrderCreateCommand, OperationResult<Order>>
     {
         private readonly DataContext _ctx;
+        private readonly OperationResult<Order> _result = new OperationResult<Order>();
         public OrderCreateCommandHandler(DataContext ctx)
         {
             _ctx = ctx;
@@ -14,43 +22,80 @@ namespace PastryShop.Application.Orders.CommandHandlers
 
         public async Task<OperationResult<Order>> Handle(OrderCreateCommand request, CancellationToken cancellationToken)
         {
-            var result = new OperationResult<Order>();
-
             try
             {
-                var productList = new List<Product>();
-                foreach (var productId in request.ProductList)
-                {
-                    var product = await _ctx.Products.FirstOrDefaultAsync(pr => pr.ProductId == productId);
+                await using var transaction = await _ctx.Database.BeginTransactionAsync(cancellationToken);
 
-                    if (product == null)
-                    {
-                        result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, productId));
-                    }
-                    else productList.Add(product);
-                }
-
-                if (productList.Count == 0)
-                {
-                    result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderHasNoValidProductsAdded);
-                    return result;
-                }
-                
+                var shipmentTypeOrder = CreateShipmentTypeAsync(request, transaction, cancellationToken).Result;
                 var shippingAddressOrder = ShippingAddressOrder.CreateShippingAddressOrder(request.County, request.City, request.Address, request.PostCode);
-                var newOrder = Order.CreateOrder(request.UserProfileId, productList, request.Price, request.ShipmentTypeId, shippingAddressOrder, request.UserInstructions, request.DeliveryDate);
+                var newOrder = Order.CreateOrder(request.UserProfileId, request.Price, shipmentTypeOrder, shippingAddressOrder, request.UserInstructions, request.DeliveryDate);
+
+                CreateLineItemsAsync(request.ProductList, newOrder, transaction, cancellationToken);
 
                 _ctx.Orders.Add(newOrder);
                 await _ctx.SaveChangesAsync(cancellationToken);
 
-                result.Payload = newOrder;
+                _result.Payload = newOrder;
 
             }
             catch (Exception ex)
             {
-                result.AddUnknownError(ex.Message);
+                _result.AddUnknownError(ex.Message);
             }
             
-            return result;
+            return _result;
+        }
+
+        private async Task CreateLineItemsAsync(List<Guid> productIds, Order order, IDbContextTransaction transaction, CancellationToken cancellationToken)
+        {
+            try
+            {
+                foreach (var productId in productIds)
+                {
+                    var product = await _ctx.Products.FirstOrDefaultAsync(pr => pr.ProductId == productId, cancellationToken);
+
+                    if (product == null)
+                    {
+                        _result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, productId));
+                    }
+                    else
+                    {
+                        order.AddLineItem(product);
+                    } 
+                        
+                }
+
+                if (order.LineItems.Count == 0)
+                {
+                    _result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderHasNoValidProductsAdded);
+                    transaction.RollbackAsync(cancellationToken);
+                }
+            }
+            catch(Exception)
+            {
+                transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        }
+        private async Task<ShipmentTypeOrder> CreateShipmentTypeAsync(OrderCreateCommand order, IDbContextTransaction transaction, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var shipmentType = await _ctx.ShipmentTypes.FirstOrDefaultAsync(st => st.ShipmentTypeId == order.ShipmentTypeId);
+                if (shipmentType is null)
+                {
+                    _result.AddError(ErrorCode.NotFound, string.Format(ShipmentTypeErrorMessages.ShipmentTypeNotFound, order.ShipmentTypeId));
+                    _ctx.Database.RollbackTransactionAsync(cancellationToken);
+                }
+                var shipmentTypeOrder = ShipmentTypeOrder.CreateShipmentTypeOrder(shipmentType.Name, shipmentType.Price);
+
+                return shipmentTypeOrder;
+            }
+            catch (Exception)
+            {
+                _ctx.Database.RollbackTransactionAsync(cancellationToken);
+                throw;
+            }
         }
     }
 }

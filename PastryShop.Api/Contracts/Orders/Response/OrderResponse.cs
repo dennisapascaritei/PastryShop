@@ -1,17 +1,17 @@
-﻿using PastryShop.Domain.Aggregates.OrderAggregate;
+﻿using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
 
 namespace PastryShop.Api.Contracts.Orders.Response
 {
     public class OrderResponse
     {
-        public Guid OrderId { get; private set; }
-        public Guid UserProfileId { get; private set; }
-        public List<ProductResponse> ProductList { get; private set; }
-        public double Price { get; private set; }
-        public ShipmentType ShipmentType { get; private set; }
-        public ShippingAddressOrder ShippingAddressOrder { get; private set; }
-        public string UserInstructions { get; private set; }
-        public DateTime DateCreated { get; private set; }
-        public DateTime DeliveryDate { get; private set; }
+        public Guid OrderId { get; set; }
+        public Guid UserProfileId { get; set; }
+        public List<ProductResponse> ProductList { get; set; }
+        public double Price { get; set; }
+        public ShipmentTypeResponse ShipmentType { get; set; }
+        public ShippingAddressOrder ShippingAddressOrder { get; set; }
+        public string UserInstructions { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime DeliveryDate { get; set; }
     }
 }

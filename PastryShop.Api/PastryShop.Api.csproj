@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -28,10 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\PastryShop.Application\PastryShop.Application.csproj" />
     <ProjectReference Include="..\PastryShop.Dal\PastryShop.Dal.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Contracts\Identity\Response\" />
   </ItemGroup>
 
 </Project>

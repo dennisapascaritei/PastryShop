@@ -5,7 +5,7 @@ namespace PastryShop.Application.Enums
     {
         NotFound = 404,
         ServerError = 500,
-
+        IdentityCreationFailed = 202,
         OrderUpdateNotPossible = 300,
         OrderDeleteNotPossible = 301,
         IdentityUserAlreadyExists = 320,

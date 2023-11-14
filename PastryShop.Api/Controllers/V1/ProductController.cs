@@ -46,6 +46,7 @@ namespace PastryShop.Api.Controllers.V1
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreateRequest newProduct, CancellationToken cancellationToken)
         {
             var command = new ProductCreateCommand

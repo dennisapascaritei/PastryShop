@@ -1,4 +1,6 @@
 ﻿
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
+
 namespace PastryShop.Application.ShipmentTypes.QueryHandlers
 {
     public class GetShipmentTypeByIdQueryHandler : IRequestHandler<GetShipmentTypeByIdQuery, OperationResult<ShipmentType>>

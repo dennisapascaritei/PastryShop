@@ -6,6 +6,8 @@ namespace PastryShop.Api.Mapping
         public UserProfileMapping()
         {
             CreateMap<UserProfile, UserProfileResponse>();
+            CreateMap<BasicInfo, BasicInfoResponse>();
+            CreateMap<ShippingAddress, ShippingAddressResponse>();
         }
     }
 }

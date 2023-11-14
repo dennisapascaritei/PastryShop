@@ -10,3 +10,5 @@ global using PastryShop.Domain.Aggregates.OrderAggregate;
 global using PastryShop.Application.ShipmentTypes.Commands;
 global using PastryShop.Application.ShipmentTypes.Queries;
 global using Microsoft.EntityFrameworkCore;
+global using PastryShop.Application.Identity.Dtos;
+global using PastryShop.Application.UserProfiles.Queries;

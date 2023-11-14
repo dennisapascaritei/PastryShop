@@ -7,7 +7,7 @@ namespace PastryShop.Dal.Configuration
     {
         public void Configure(EntityTypeBuilder<ShippingAddress> builder)
         {
-            builder.HasKey(sa => sa.ShippingAddressId);
+            
         }
     }
 }

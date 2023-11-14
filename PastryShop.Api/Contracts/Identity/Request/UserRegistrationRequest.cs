@@ -21,6 +21,8 @@ namespace PastryShop.Api.Contracts.Identity.Request
         [MinLength(1)]
         [MaxLength(40)]
         public string LastName { get; set; }
+        [Required]
+        public string Phone { get; set; }
 
         [Required]
         [MinLength(1)]

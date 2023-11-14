@@ -1,6 +1,7 @@
 ﻿
 namespace PastryShop.Domain.Aggregates.UserProfileAggregate
 {
+    
     public class UserProfile
     {
         private UserProfile() { }

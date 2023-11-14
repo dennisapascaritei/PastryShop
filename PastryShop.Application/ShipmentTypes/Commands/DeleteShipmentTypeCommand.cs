@@ -1,4 +1,6 @@
 ﻿
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
+
 namespace PastryShop.Application.ShipmentTypes.Commands
 {
     public class DeleteShipmentTypeCommand : IRequest<OperationResult<ShipmentType>>

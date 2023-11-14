@@ -2,9 +2,14 @@
 {
     public class ShippingAddressOrder
     {
-        private ShippingAddressOrder() { }
+        internal ShippingAddressOrder(string county, string city, string address, string postCode)
+        {
+            County = county;
+            City = city;
+            Address = address;
+            PostCode = postCode;
+        }
 
-        public Guid ShippingAddressOrderId { get; private set; }
         public string County { get; private set; }
         public string City { get; private set; }
         public string Address { get; private set; }
@@ -14,7 +19,7 @@
         {
             //To Do: add validation, error handling strategies, error notification strategies
 
-            return new ShippingAddressOrder()
+            return new ShippingAddressOrder(county, city, address, postCode)
             {
                 County = county,
                 City = city,

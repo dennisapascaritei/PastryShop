@@ -7,7 +7,10 @@ namespace PastryShop.Api.Registrars
     {
         public void RegisterServices(WebApplicationBuilder builder)
         {
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(config =>
+            {
+                config.Filters.Add(typeof(ValidateModelAttribute));
+            });
 
             builder.Services.AddApiVersioning(config =>
             {

@@ -6,6 +6,7 @@ namespace PastryShop.Api.Mapping
         public ProductMappings()
         {
             CreateMap<Product, ProductResponse>();
+            CreateMap<LineItem, ProductResponse>();
         }
         
     }

@@ -43,33 +43,7 @@ namespace PastryShop.Api.Controllers.V1
             var mapped = _mapper.Map<UserProfileResponse>(result.Payload);
 
             return Ok(mapped);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUserProfile([FromBody]UserProfileCreateRequest newUserProfile, string identityId, CancellationToken cancellationToken)
-        {
-            var command = new CreateUserProfileCommand
-            {
-                IndentityId = identityId,
-                FirstName = newUserProfile.FirstName,
-                LastName = newUserProfile.LastName,
-                EmailAddress = newUserProfile.EmailAddress,
-                Phone =  newUserProfile.Phone,
-                County = newUserProfile.County,
-                City = newUserProfile.City,
-                Address = newUserProfile.Address,
-                PostCode = newUserProfile.PostCode
-
-            };
-
-            var result = await _mediator.Send(command, cancellationToken);
-
-            if (result.IsError) return HandleErrorResponse(result.Errors);
-
-            var mapped = _mapper.Map<UserProfileResponse>(result.Payload);
-
-            return Ok(mapped);
-        }
+        }        
 
         [HttpPut]
         [Route(ApiRoutes.UserProfiles.UserProfileId)]

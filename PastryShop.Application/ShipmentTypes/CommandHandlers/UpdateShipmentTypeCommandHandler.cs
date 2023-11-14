@@ -1,4 +1,6 @@
 ﻿
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
+
 namespace PastryShop.Application.ShipmentTypes.CommandHandlers
 {
     public class UpdateShipmentTypeCommandHandler : IRequestHandler<UpdateShipmentTypeCommand, OperationResult<ShipmentType>>

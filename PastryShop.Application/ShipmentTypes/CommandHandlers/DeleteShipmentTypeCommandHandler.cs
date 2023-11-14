@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;
 
 namespace PastryShop.Application.ShipmentTypes.CommandHandlers
 {

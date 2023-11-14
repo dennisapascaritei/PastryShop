@@ -17,6 +17,7 @@ namespace PastryShop.Application.Products.CommandHandlers
             {
                 var product = Product.CreateProduct(request.Name, request.Description, request.Price, request.Weight, request.ImageURL);
                 _ctx.Products.Add(product);
+
                 await _ctx.SaveChangesAsync(cancellationToken);
 
                 result.Payload = product;
@@ -25,7 +26,6 @@ namespace PastryShop.Application.Products.CommandHandlers
             {
                 result.AddUnknownError(ex.Message);
             }
-
 
             return result;
         }
