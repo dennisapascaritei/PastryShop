@@ -1,14 +1,12 @@
-﻿namespace PastryShop.Api.Contracts.Products.Response
+﻿namespace PastryShop.Api.Contracts.LineItems.Response
 {
-    public class ProductResponse
+    public class LineItemResponse
     {
-        public Guid ProductId { get; set; }
+        public Guid LineItemId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public double? Price { get; set; }
         public double? Weight { get; set; }
         public string ImageURL { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime LastUpdated { get; set; }
     }
 }

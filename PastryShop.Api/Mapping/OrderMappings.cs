@@ -5,7 +5,7 @@
         public OrderMappings()
         {
             CreateMap<Order, OrderResponse>()
-                .ForMember(dest => dest.ProductList, opt =>
+                .ForMember(dest => dest.LineItems, opt =>
                 opt.MapFrom(src => src.LineItems))
                 .ForMember(dest => dest.Price, opt =>
                 opt.MapFrom(src => src.Price))

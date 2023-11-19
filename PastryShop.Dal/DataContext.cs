@@ -14,6 +14,7 @@ namespace PastryShop.Dal
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<ShipmentType> ShipmentTypes { get; set; }
+        public DbSet<LineItem> LineItem { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

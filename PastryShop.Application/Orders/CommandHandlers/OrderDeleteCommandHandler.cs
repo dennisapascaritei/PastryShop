@@ -31,7 +31,7 @@ namespace PastryShop.Application.Orders.CommandHandlers
                     return result;
                 }
 
-                order.EmptyProductList();
+                order.EmptyLineItemstList();
 
                 _ctx.Orders.Remove(order);
                 await _ctx.SaveChangesAsync(cancellationToken);

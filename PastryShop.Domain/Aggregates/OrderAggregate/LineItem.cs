@@ -4,6 +4,9 @@
     {
         internal LineItem(Guid orderId, Guid productId, string name, string description, double price, double weight, string imageURL)
         {
+            LineItemId = Guid.NewGuid();
+            OrderId = orderId;
+            ProductId = productId;
             Name = name;
             Description = description;
             Price = price;
@@ -25,7 +28,7 @@
 
             return new LineItem(orderId, productId, name, description, price, weight, imageURL)
             {
-                LineItemId = new Guid(),
+                LineItemId = Guid.NewGuid(),
                 OrderId = orderId,
                 ProductId = productId,
                 Name = name,

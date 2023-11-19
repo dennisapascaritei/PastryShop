@@ -33,3 +33,5 @@ global using System.Text;
 global using PastryShop.Api.Contracts.Identity.Request;
 global using PastryShop.Api.Contracts.Identity.Response;
 global using PastryShop.Application.Identity.Commands;
+global using PastryShop.Api.Contracts.ShipmentTypeOrder.Response;
+global using PastryShop.Domain.Aggregates.ShipmentTypeAggregate;

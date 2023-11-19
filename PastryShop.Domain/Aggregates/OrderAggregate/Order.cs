@@ -24,9 +24,9 @@ namespace PastryShop.Domain.Aggregates.OrderAggregate
             string userInstructions, DateTime deliveryDate)
         {
             //To Do: add validation, error handling strategies, error notification strategies
-
-            return new Order
+            var order = new Order
             {
+                OrderId = Guid.NewGuid(),
                 UserProfileId = userProfileId,
                 Price = price,
                 ShipmentType = shipmentType,
@@ -35,12 +35,13 @@ namespace PastryShop.Domain.Aggregates.OrderAggregate
                 DeliveryDate = deliveryDate,
                 DateCreated = DateTime.UtcNow
             };
+            return order;
         }
 
         public void UpdateOrder(Order order)
         {
             UserProfileId = order.UserProfileId;
-            LineItems = order.LineItems;
+            //LineItems = order.LineItems;
             Price = order.Price;
             ShipmentType = order.ShipmentType;
             ShippingAddress = order.ShippingAddress;
@@ -49,10 +50,14 @@ namespace PastryShop.Domain.Aggregates.OrderAggregate
             DateCreated = DateTime.UtcNow;
         }
 
-        public void AddLineItem(Product product)
+        public void AddLineItem(Product product, Guid orderId)
         {
-            var lineItem = new LineItem(this.OrderId, product.ProductId, product.Name, product.Description, product.Price, product.Weight, product.ImageURL);
+            var lineItem = new LineItem(orderId, product.ProductId, product.Name, product.Description, product.Price, product.Weight, product.ImageURL);
             LineItems.Add(lineItem);
+        }
+        public void RemoveLineItem(LineItem lineItem)
+        {
+            LineItems.Remove(lineItem);
         }
         public void AddShipmentTypeToOrder(ShipmentType shipmentType)
         {
@@ -66,7 +71,7 @@ namespace PastryShop.Domain.Aggregates.OrderAggregate
             ShippingAddress = address;
         }
 
-        public void EmptyProductList()
+        public void EmptyLineItemstList()
         {
             LineItems.Clear();
         }

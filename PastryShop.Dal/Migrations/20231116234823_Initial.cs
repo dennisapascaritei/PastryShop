@@ -208,6 +208,8 @@ namespace PastryShop.Dal.Migrations
                 columns: table => new
                 {
                     LineItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
@@ -218,12 +220,28 @@ namespace PastryShop.Dal.Migrations
                 {
                     table.PrimaryKey("PK_LineItem", x => x.LineItemId);
                     table.ForeignKey(
-                        name: "FK_LineItem_Orders_LineItemId",
-                        column: x => x.LineItemId,
+                        name: "FK_LineItem_Orders_OrderId",
+                        column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LineItem_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LineItem_OrderId",
+                table: "LineItem",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LineItem_ProductId",
+                table: "LineItem",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserProfileId",
@@ -236,9 +254,6 @@ namespace PastryShop.Dal.Migrations
         {
             migrationBuilder.DropTable(
                 name: "LineItem");
-
-            migrationBuilder.DropTable(
-                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -266,6 +281,9 @@ namespace PastryShop.Dal.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");

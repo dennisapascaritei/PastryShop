@@ -105,12 +105,13 @@ namespace PastryShop.Api.Controllers.V1
         [HttpDelete]
         [Route(ApiRoutes.Order.OrderId)]
         [ValidateGuid("orderId", "userProfileId")]
-        public async Task<IActionResult> DeleteOrder(string orderId, string userProfileId, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteOrder(string orderId, CancellationToken cancellationToken)
         {
+            var userProfileId = HttpContext.GetUserProfileIdClaimValue();
             var command = new OrderDeleteCommand 
             { 
                 OrderId = Guid.Parse(orderId),
-                UserProfileId = Guid.Parse(userProfileId)
+                UserProfileId = userProfileId
             };
 
             var result = await _mediator.Send(command, cancellationToken);

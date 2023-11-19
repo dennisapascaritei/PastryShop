@@ -38,7 +38,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -60,7 +60,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoleClaims");
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -112,7 +112,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -134,7 +134,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserClaims");
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -155,7 +155,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -168,7 +168,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -187,7 +187,7 @@ namespace PastryShop.Dal.Migrations
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UserTokens");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.LineItem", b =>
@@ -226,7 +226,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("LineItem");
+                    b.ToTable("LineItem", (string)null);
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.Order", b =>
@@ -258,7 +258,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.ProductAggregate.Product", b =>
@@ -293,7 +293,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.ShipmentTypeAggregate.ShipmentType", b =>
@@ -314,7 +314,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("ShipmentTypeId");
 
-                    b.ToTable("ShipmentTypes");
+                    b.ToTable("ShipmentTypes", (string)null);
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile", b =>
@@ -335,7 +335,7 @@ namespace PastryShop.Dal.Migrations
 
                     b.HasKey("UserProfileId");
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfiles", (string)null);
                 });
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.LineItem", b =>
@@ -361,7 +361,7 @@ namespace PastryShop.Dal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("PastryShop.Domain.Aggregates.OrderAggregate.ShipmentTypeOrder", "ShipmentType", b1 =>
+                    b.OwnsOne("PastryShop.Domain.Aggregates.OrderAggregate.Order.ShipmentType#PastryShop.Domain.Aggregates.OrderAggregate.ShipmentTypeOrder", "ShipmentType", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uniqueidentifier");
@@ -381,13 +381,13 @@ namespace PastryShop.Dal.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.OwnsOne("PastryShop.Domain.Aggregates.OrderAggregate.ShippingAddressOrder", "ShippingAddress", b1 =>
+                    b.OwnsOne("PastryShop.Domain.Aggregates.OrderAggregate.Order.ShippingAddress#PastryShop.Domain.Aggregates.OrderAggregate.ShippingAddressOrder", "ShippingAddress", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uniqueidentifier");
@@ -414,7 +414,7 @@ namespace PastryShop.Dal.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -429,7 +429,7 @@ namespace PastryShop.Dal.Migrations
 
             modelBuilder.Entity("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile", b =>
                 {
-                    b.OwnsOne("PastryShop.Domain.Aggregates.UserProfileAggregate.BasicInfo", "BasicInfo", b1 =>
+                    b.OwnsOne("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile.BasicInfo#PastryShop.Domain.Aggregates.UserProfileAggregate.BasicInfo", "BasicInfo", b1 =>
                         {
                             b1.Property<Guid>("UserProfileId")
                                 .HasColumnType("uniqueidentifier");
@@ -456,12 +456,12 @@ namespace PastryShop.Dal.Migrations
 
                             b1.HasKey("UserProfileId");
 
-                            b1.ToTable("UserProfiles");
+                            b1.ToTable("UserProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserProfileId");
 
-                            b1.OwnsOne("PastryShop.Domain.Aggregates.UserProfileAggregate.ShippingAddress", "ShippingAddress", b2 =>
+                            b1.OwnsOne("PastryShop.Domain.Aggregates.UserProfileAggregate.UserProfile.BasicInfo#PastryShop.Domain.Aggregates.UserProfileAggregate.BasicInfo.ShippingAddress#PastryShop.Domain.Aggregates.UserProfileAggregate.ShippingAddress", "ShippingAddress", b2 =>
                                 {
                                     b2.Property<Guid>("BasicInfoUserProfileId")
                                         .HasColumnType("uniqueidentifier");
@@ -491,7 +491,7 @@ namespace PastryShop.Dal.Migrations
 
                                     b2.HasKey("BasicInfoUserProfileId");
 
-                                    b2.ToTable("UserProfiles");
+                                    b2.ToTable("UserProfiles", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("BasicInfoUserProfileId");

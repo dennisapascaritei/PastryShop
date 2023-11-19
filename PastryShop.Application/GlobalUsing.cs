@@ -12,3 +12,7 @@ global using PastryShop.Application.ShipmentTypes.Queries;
 global using Microsoft.EntityFrameworkCore;
 global using PastryShop.Application.Identity.Dtos;
 global using PastryShop.Application.UserProfiles.Queries;
+global using Microsoft.EntityFrameworkCore.Storage;
+global using PastryShop.Application.Orders.Commands;
+global using PastryShop.Application.Products;
+global using PastryShop.Application.ShipmentTypes;

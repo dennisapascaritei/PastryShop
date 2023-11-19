@@ -12,7 +12,7 @@ using PastryShop.Dal;
 namespace PastryShop.Dal.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231113225239_Initial")]
+    [Migration("20231116234823_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -196,6 +196,7 @@ namespace PastryShop.Dal.Migrations
             modelBuilder.Entity("PastryShop.Domain.Aggregates.OrderAggregate.LineItem", b =>
                 {
                     b.Property<Guid>("LineItemId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -210,13 +211,23 @@ namespace PastryShop.Dal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Weight")
                         .HasColumnType("float");
 
                     b.HasKey("LineItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("LineItem");
                 });
@@ -334,7 +345,13 @@ namespace PastryShop.Dal.Migrations
                 {
                     b.HasOne("PastryShop.Domain.Aggregates.OrderAggregate.Order", null)
                         .WithMany("LineItems")
-                        .HasForeignKey("LineItemId")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PastryShop.Domain.Aggregates.ProductAggregate.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

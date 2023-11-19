@@ -26,7 +26,7 @@ namespace PastryShop.Application.Orders.QueryHandlers
 
                 if (order is null)
                 {
-                    result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderNotFound);
+                    result.AddError(ErrorCode.NotFound, string.Format(OrderErrorMessages.OrderNotFound, request.OrderId));
                     return result;
                 }
 

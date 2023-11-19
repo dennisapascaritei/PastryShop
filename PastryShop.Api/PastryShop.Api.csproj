@@ -30,4 +30,9 @@
     <ProjectReference Include="..\PastryShop.Dal\PastryShop.Dal.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Contracts\LineItems\Request\" />
+    <Folder Include="Contracts\ShipmentTypeOrder\Request\" />
+  </ItemGroup>
+
 </Project>

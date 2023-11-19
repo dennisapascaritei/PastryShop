@@ -22,7 +22,7 @@ namespace PastryShop.Application.Orders.CommandHandlers
                     .Include(o => o.LineItems)
                     .Include(o => o.ShipmentType)
                     .Include(o => o.ShippingAddress)
-                    .FirstOrDefaultAsync(o => o.OrderId == request.OrderId);
+                    .FirstOrDefaultAsync(o => o.OrderId == request.OrderId, cancellationToken);
 
                 if (order is null)
                 {
@@ -36,14 +36,13 @@ namespace PastryShop.Application.Orders.CommandHandlers
                     return _result;
                 }
 
-                await using var transaction = await _ctx.Database.BeginTransactionAsync(cancellationToken);
-
-                var shipmentTypeOrder = CreateShipmentTypeAsync(request, transaction, cancellationToken).Result;
+                var shipmentTypeOrder = CreateShipmentTypeAsync(request, cancellationToken).Result;
                 var shippingAddressOrder = ShippingAddressOrder.CreateShippingAddressOrder(request.County, request.City, request.Address, request.PostCode);
                 var updatedOrder = Order.CreateOrder(request.UserProfileId, request.Price, shipmentTypeOrder, shippingAddressOrder, request.UserInstructions, request.DeliveryDate);
 
-                CreateLineItemsAsync(request.ProductList, updatedOrder, transaction, cancellationToken);
+                await CreateLineItemsAsync(request.ProductList, updatedOrder, cancellationToken);
 
+                //order.EmptyLineItemstList();
                 order.UpdateOrder(updatedOrder);
 
                 _ctx.Orders.Update(order);
@@ -60,7 +59,7 @@ namespace PastryShop.Application.Orders.CommandHandlers
             return _result;
         }
 
-        private async Task CreateLineItemsAsync(List<Guid> productIds, Order order, IDbContextTransaction transaction, CancellationToken cancellationToken)
+        private async Task CreateLineItemsAsync(List<Guid> productIds, Order order, CancellationToken cancellationToken)
         {
             try
             {
@@ -72,22 +71,20 @@ namespace PastryShop.Application.Orders.CommandHandlers
                     {
                         _result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, productId));
                     }
-                    else order.AddLineItem(product);
+                    else order.AddLineItem(product, order.OrderId);
                 }
 
                 if (order.LineItems.Count == 0)
                 {
                     _result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderHasNoValidProductsAdded);
-                    transaction.RollbackAsync(cancellationToken);
                 }
             }
             catch (Exception)
             {
-                transaction.RollbackAsync(cancellationToken);
                 throw;
             }
         }
-        private async Task<ShipmentTypeOrder> CreateShipmentTypeAsync(OrderUpdateCommand order, IDbContextTransaction transaction, CancellationToken cancellationToken)
+        private async Task<ShipmentTypeOrder> CreateShipmentTypeAsync(OrderUpdateCommand order, CancellationToken cancellationToken)
         {
             try
             {
@@ -95,7 +92,6 @@ namespace PastryShop.Application.Orders.CommandHandlers
                 if (shipmentType is null)
                 {
                     _result.AddError(ErrorCode.NotFound, string.Format(ShipmentTypeErrorMessages.ShipmentTypeNotFound, order.ShipmentTypeId));
-                    _ctx.Database.RollbackTransactionAsync(cancellationToken);
                 }
                 var shipmentTypeOrder = ShipmentTypeOrder.CreateShipmentTypeOrder(shipmentType.Name, shipmentType.Price);
 
@@ -103,7 +99,6 @@ namespace PastryShop.Application.Orders.CommandHandlers
             }
             catch (Exception)
             {
-                _ctx.Database.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
         }
