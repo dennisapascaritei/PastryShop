@@ -18,6 +18,8 @@ namespace PastryShop.Api.Registrars
                 }
             });
 
+            app.UseCors("PastryShopOrigins");
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();

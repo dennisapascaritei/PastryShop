@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using PastryShop.Application.Orders.Commands;
 using PastryShop.Application.Products;
 using PastryShop.Application.ShipmentTypes;
+using PastryShop.Domain.Aggregates.OrderAggregate;
+using System;
 
 namespace PastryShop.Application.Orders.CommandHandlers
 {
@@ -40,11 +42,16 @@ namespace PastryShop.Application.Orders.CommandHandlers
                 var shippingAddressOrder = ShippingAddressOrder.CreateShippingAddressOrder(request.County, request.City, request.Address, request.PostCode);
                 var updatedOrder = Order.CreateOrder(request.UserProfileId, request.Price, shipmentTypeOrder, shippingAddressOrder, request.UserInstructions, request.DeliveryDate);
 
+               
+
                 await CreateLineItemsAsync(request.ProductList, updatedOrder, cancellationToken);
 
-                //order.EmptyLineItemstList();
                 order.UpdateOrder(updatedOrder);
 
+                foreach ( var lineItem in order.LineItems )
+                {
+                    _ctx.LineItem.Add(lineItem);
+                }
                 _ctx.Orders.Update(order);
                 await _ctx.SaveChangesAsync(cancellationToken);
 
@@ -59,7 +66,7 @@ namespace PastryShop.Application.Orders.CommandHandlers
             return _result;
         }
 
-        private async Task CreateLineItemsAsync(List<Guid> productIds, Order order, CancellationToken cancellationToken)
+        private async Task CreateLineItemsAsync(List<Guid> productIds, Order newOrder, CancellationToken cancellationToken)
         {
             try
             {
@@ -71,10 +78,10 @@ namespace PastryShop.Application.Orders.CommandHandlers
                     {
                         _result.AddError(ErrorCode.NotFound, string.Format(ProductErrorMessages.ProductNotFound, productId));
                     }
-                    else order.AddLineItem(product, order.OrderId);
+                    else newOrder.AddLineItem(product, newOrder.OrderId);
                 }
 
-                if (order.LineItems.Count == 0)
+                if (newOrder.LineItems.Count == 0)
                 {
                     _result.AddError(ErrorCode.NotFound, OrderErrorMessages.OrderHasNoValidProductsAdded);
                 }
@@ -92,10 +99,14 @@ namespace PastryShop.Application.Orders.CommandHandlers
                 if (shipmentType is null)
                 {
                     _result.AddError(ErrorCode.NotFound, string.Format(ShipmentTypeErrorMessages.ShipmentTypeNotFound, order.ShipmentTypeId));
+                    return null;
                 }
-                var shipmentTypeOrder = ShipmentTypeOrder.CreateShipmentTypeOrder(shipmentType.Name, shipmentType.Price);
-
-                return shipmentTypeOrder;
+                else
+                {
+                    var shipmentTypeOrder = ShipmentTypeOrder.CreateShipmentTypeOrder(shipmentType.Name, shipmentType.Price);
+                    return shipmentTypeOrder;
+                }
+  
             }
             catch (Exception)
             {

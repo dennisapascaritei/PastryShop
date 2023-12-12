@@ -38,5 +38,14 @@
                 ImageURL = imageURL,
             };
         }
+        public void UpdateLineItem(Product product)
+        {
+            ProductId = product.ProductId;
+            Name = product.Name;
+            Description = product.Description;
+            Price = product.Price;
+            Weight = product.Weight;
+            ImageURL = product.ImageURL;
+        }
     }
 }

@@ -40,14 +40,12 @@ namespace PastryShop.Domain.Aggregates.OrderAggregate
 
         public void UpdateOrder(Order order)
         {
-            UserProfileId = order.UserProfileId;
-            //LineItems = order.LineItems;
+            LineItems = order.LineItems;
             Price = order.Price;
             ShipmentType = order.ShipmentType;
             ShippingAddress = order.ShippingAddress;
             UserInstructions = order.UserInstructions;
             DeliveryDate = order.DeliveryDate;
-            DateCreated = DateTime.UtcNow;
         }
 
         public void AddLineItem(Product product, Guid orderId)
@@ -55,6 +53,12 @@ namespace PastryShop.Domain.Aggregates.OrderAggregate
             var lineItem = new LineItem(orderId, product.ProductId, product.Name, product.Description, product.Price, product.Weight, product.ImageURL);
             LineItems.Add(lineItem);
         }
+
+        public void UpdateLineItem(LineItem lineItem, Product product)
+        {
+            lineItem.UpdateLineItem(product);
+        }
+
         public void RemoveLineItem(LineItem lineItem)
         {
             LineItems.Remove(lineItem);

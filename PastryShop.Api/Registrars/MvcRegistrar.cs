@@ -27,6 +27,12 @@ namespace PastryShop.Api.Registrars
             });
 
             builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddCors(options => options.AddPolicy(name: "PastryShopOrigins",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+                }));
         }
     }
 }
