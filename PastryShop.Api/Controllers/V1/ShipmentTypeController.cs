@@ -1,4 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+
 namespace PastryShop.Api.Controllers.V1
 {
     [ApiController]
@@ -43,6 +46,7 @@ namespace PastryShop.Api.Controllers.V1
             return Ok(mapped);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateShipmentType([FromBody] ShipmentTypeCreateRequest newShipmentType, CancellationToken cancellationToken)
         {
@@ -61,6 +65,7 @@ namespace PastryShop.Api.Controllers.V1
             return Ok(mapped);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route(ApiRoutes.ShipmentTypes.ShipmentTypeId)]
         [ValidateGuid("shipmentTypeId")]
@@ -80,6 +85,7 @@ namespace PastryShop.Api.Controllers.V1
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route(ApiRoutes.ShipmentTypes.ShipmentTypeId)]
         [ValidateGuid("shipmentTypeId")]

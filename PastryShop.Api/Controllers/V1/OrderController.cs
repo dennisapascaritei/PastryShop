@@ -22,7 +22,9 @@ namespace PastryShop.Api.Controllers.V1
         [HttpGet]
         public async Task<IActionResult> GetAllOrders(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAllOrdersQuery(), cancellationToken);
+            var userProfileId = HttpContext.GetUserProfileIdClaimValue();
+            var query = new GetAllOrdersQuery { UserProfileId = userProfileId };
+            var result = await _mediator.Send(query, cancellationToken);
             if (result.IsError) return HandleErrorResponse(result.Errors);
 
             var mapped = _mapper.Map<List<OrderResponse>>(result.Payload);

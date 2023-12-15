@@ -18,6 +18,7 @@ namespace PastryShop.Application.Orders.QueryHandlers
             try
             {
                 var orders = await _ctx.Orders
+                    .Where(o => o.UserProfileId == request.UserProfileId)
                     .Include(o => o.LineItems)
                     .Include(o => o.ShipmentType)
                     .Include(o => o.ShippingAddress)

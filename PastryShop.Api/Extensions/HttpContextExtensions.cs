@@ -13,6 +13,11 @@ namespace PastryShop.Api.Extensions
         {
             return GetGuidClaimValue("IdentityId", context);
         }
+
+        public static Guid GetUserRoleClaimValue(this HttpContext context)
+        {
+            return GetGuidClaimValue("role", context);
+        }
         public static Guid GetGuidClaimValue(string key, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;

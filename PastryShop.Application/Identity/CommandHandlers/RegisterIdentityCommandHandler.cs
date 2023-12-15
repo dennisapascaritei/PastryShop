@@ -35,15 +35,23 @@ namespace PastryShop.Application.Identity.CommandHandlers
 
                 await using var transaction = await _ctx.Database.BeginTransactionAsync(cancellationToken);
 
+                if (request.Role != "Admin")
+                {
+                    request.Role = "Member";
+                }
+
                 var identity = await CreateIdentityUserAsync(request, transaction, cancellationToken);
                 if (_result.IsError) return _result;
 
                 var profile = await CreateUserProfileAsync(request, identity, transaction, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
+                var userRoles = await _userManager.GetRolesAsync(identity);
+
                 _result.Payload = _mapper.Map<IdentityUserProfileDto>(profile);
+                _result.Payload.Roles = userRoles.ToList();
                 _result.Payload.Username = identity.UserName;
-                _result.Payload.Token = GetJwtToken(identity, profile);
+                _result.Payload.Token = GetJwtToken(identity, profile, userRoles.ToList());
             }
             catch (Exception e)
             {
@@ -65,6 +73,7 @@ namespace PastryShop.Application.Identity.CommandHandlers
         {
             var identity = new IdentityUser { Email = request.EmailAddress, UserName = request.EmailAddress };
             var createdIdentity = await _userManager.CreateAsync(identity, request.Password);
+            
 
             if (!createdIdentity.Succeeded)
             {
@@ -75,6 +84,10 @@ namespace PastryShop.Application.Identity.CommandHandlers
                     _result.AddError(ErrorCode.IdentityCreationFailed, identityError.Description);
                 }
             }
+
+            await _userManager.AddToRoleAsync(identity, request.Role);
+           
+
 
             return identity;
         }
@@ -100,7 +113,7 @@ namespace PastryShop.Application.Identity.CommandHandlers
             }
         }
         
-        private string GetJwtToken(IdentityUser identity, UserProfile profile)
+        private string GetJwtToken(IdentityUser identity, UserProfile profile, List<string> userRoles)
         {
             var claimsIdentity = new ClaimsIdentity(new Claim[]
                     {
@@ -110,6 +123,11 @@ namespace PastryShop.Application.Identity.CommandHandlers
                         new Claim("IdentityId", identity.Id),
                         new Claim("UserProfileId", profile.UserProfileId.ToString())
                     });
+
+            foreach (var role in userRoles)
+            {
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = _identityService.CreateSecurityToken(claimsIdentity);
 

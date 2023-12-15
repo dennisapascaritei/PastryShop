@@ -19,8 +19,14 @@ namespace PastryShop.Api.Extensions
         public static void RegisterPipelineComponents(this WebApplication app, Type scanningType)
         {
             var registrars = GetRegistrars<IWebApplicationRegistrar>(scanningType);
+            var registrarsAsync = GetRegistrars<IWebApplicationAsyncRegistrar>(scanningType);
 
             foreach(var registrar in registrars)
+            {
+                registrar.RegisterPipelineComponents(app);
+            }
+
+            foreach (var registrar in registrarsAsync)
             {
                 registrar.RegisterPipelineComponents(app);
             }

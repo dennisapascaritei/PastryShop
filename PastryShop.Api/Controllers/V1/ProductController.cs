@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using PastryShop.Api.Filters;
 
 namespace PastryShop.Api.Controllers.V1
@@ -45,6 +46,7 @@ namespace PastryShop.Api.Controllers.V1
             return Ok(mapped);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreateRequest newProduct, CancellationToken cancellationToken)
@@ -67,6 +69,7 @@ namespace PastryShop.Api.Controllers.V1
             return Ok(mapped);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route(ApiRoutes.Products.ProductId)]
         [ValidateGuid("productId")]
@@ -89,6 +92,7 @@ namespace PastryShop.Api.Controllers.V1
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route(ApiRoutes.Products.ProductId)]
         [ValidateGuid("productId")]

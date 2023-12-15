@@ -35,9 +35,12 @@ namespace PastryShop.Application.Identity.CommandHandlers
                     .Include(up => up.BasicInfo.ShippingAddress)
                     .FirstOrDefaultAsync(up => up.IndentityId == identityUser.Id);
 
+                var userRoles = await _userManager.GetRolesAsync(identityUser);
+
                 _result.Payload = _mapper.Map<IdentityUserProfileDto>(userProfile);
+                _result.Payload.Roles = userRoles.ToList();
                 _result.Payload.Username = identityUser.UserName;
-                _result.Payload.Token = GetJwtToken(identityUser, userProfile);
+                _result.Payload.Token = GetJwtToken(identityUser, userProfile, userRoles.ToList());
 
             }
             catch (Exception e)
@@ -48,7 +51,7 @@ namespace PastryShop.Application.Identity.CommandHandlers
             return _result;
         }
 
-        private string GetJwtToken(IdentityUser identityUser, UserProfile? userProfile)
+        private string GetJwtToken(IdentityUser identityUser, UserProfile? userProfile, List<string> userRoles)
         {
             var claimsIdentity = new ClaimsIdentity(new Claim[]
                 {
@@ -58,6 +61,11 @@ namespace PastryShop.Application.Identity.CommandHandlers
                     new Claim("IdentityId", identityUser.Id),
                     new Claim("UserProfileId", userProfile.UserProfileId.ToString())
                 });
+
+            foreach( var role in userRoles)
+            {
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = _identityService.CreateSecurityToken(claimsIdentity);
 

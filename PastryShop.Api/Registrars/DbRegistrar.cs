@@ -15,7 +15,7 @@ namespace PastryShop.Api.Registrars
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
                 //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 });
-                    
+
             builder.Services
                 .AddIdentityCore<IdentityUser>(options =>
             {
@@ -25,6 +25,7 @@ namespace PastryShop.Api.Registrars
                 options.Password.RequiredLength = 5;
                 options.Password.RequireNonAlphanumeric = false;
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
         }
     }

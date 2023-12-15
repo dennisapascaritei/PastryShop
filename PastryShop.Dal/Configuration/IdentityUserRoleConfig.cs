@@ -5,7 +5,8 @@ namespace PastryShop.Dal.Configuration
     {
         public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder)
         {
-            builder.HasKey(iur => iur.RoleId);
+            builder.HasKey(iur => new { iur.UserId, iur.RoleId });
+            
         }
     }
 }
